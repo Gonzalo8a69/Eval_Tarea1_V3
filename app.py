@@ -13,23 +13,23 @@ aplicar_estilos()
 menu = st.sidebar.radio("Navegación", ["Home", "Ejercicios"])
 
 if menu == "Home":
-    st.markdown("<h1>Plataforma de Analítica para Oil & Gas</h1>", unsafe_allow_html=True)
+    st.markdown("<h1>Aplicación de Análisis de Datos para Oil & Gas</h1>", unsafe_allow_html=True)
     st.markdown("<h3>Desarrollado por: JOSE GONZALO OCHOA PAZ</h3>", unsafe_allow_html=True)
-    st.markdown("<span class='metadato-home'>Programa: Bootcamp Data Analytics for Oil & Gas</span>", unsafe_allow_html=True)
+    st.markdown("<span class='metadato-home'>Curso: Bootcamp Data Analytics for Oil & Gas</span>", unsafe_allow_html=True)
     
     texto_proposito = (
-        "Esta aplicación web profesional está diseñada para ejecutar cálculos críticos de ingeniería petrolera. "
-        "A través de un enfoque modular, resuelve escenarios técnicos en las áreas de Producción, Perforación "
+        "Esta aplicación web está diseñada para ejecutar cálculos críticos de ingeniería petrolera. "
+        "A través de un enfoque modular, presenta escenarios técnicos en las áreas de Producción, Perforación "
         "y Reservorios, integrando visualizaciones dinámicas y análisis paramétrico para la toma de decisiones."
     )
     renderizar_tarjeta_info(texto_proposito)
     inyectar_js_animacion()
 
 elif menu == "Ejercicios":
-    tab1, tab2, tab3 = st.tabs(["Producción", "Perforación", "Reservorios"])
+    tab1, tab2, tab3 = st.tabs(["**Producción**", "**Perforación**", "**Reservorios**"])
     
     with tab1:
-        st.header("Análisis de IPR Compuesta")
+        st.header("**Análisis de IPR Compuesta**")
         c1, c2 = st.columns(2)
         pr = c1.number_input("Presión de Reservorio (Pr) [psi]", value=3000.0, step=100.0)
         pb = c1.number_input("Presión de Burbuja (Pb) [psi]", value=2000.0, step=100.0)
@@ -46,7 +46,7 @@ elif menu == "Ejercicios":
                 st.error(msg)
                 
     with tab2:
-        st.header("Perfil de Presión Hidrostática")
+        st.header("**Perfil de Presión Hidrostática**")
         c1, c2 = st.columns(2)
         mw = c1.number_input("Peso del Lodo (MW) [ppg]", value=10.0, step=0.1)
         pform = c2.number_input("Presión de Formación [psi]", value=4000.0, step=100.0)
@@ -63,7 +63,7 @@ elif menu == "Ejercicios":
                 st.error(msg)
                 
     with tab3:
-        st.header("Estimación Volumétrica")
+        st.header("**Estimación Volumétrica**")
         c1, c2, c3 = st.columns(3)
         area = c1.number_input("Área [acres]", value=500.0, step=50.0)
         h = c2.number_input("Espesor (h) [ft]", value=100.0, step=10.0)
