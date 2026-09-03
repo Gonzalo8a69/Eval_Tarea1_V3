@@ -102,4 +102,149 @@ def aplicar_estilos():
     """
     st.markdown(css, unsafe_allow_html=True)
 
-# ... (El resto de funciones renderizar_tarjeta_info, renderizar_tarjeta_produccion, inyectar_js_animacion, etc., se mantienen exactamente igual que en tu versión funcional)
+# --- FUNCIONES DE RENDERIZADO DE COMPONENTES HTML ---
+
+def renderizar_tarjeta_info(texto):
+    html = f"""<div class="tarjeta-info"><p class="texto-principal">{texto}</p></div>"""
+    st.markdown(html, unsafe_allow_html=True)
+
+def renderizar_tarjeta_produccion(titulo, valor, unidad=""):
+    html = f"""<div class="tarjeta-produccion"><div class="metadato">{titulo}</div><div class="valor-destacado-prod">{valor:,.2f} {unidad}</div></div>"""
+    st.markdown(html, unsafe_allow_html=True)
+
+def renderizar_tarjeta_magnetica(titulo, valor, unidad=""):
+    html = f"""<div class="tarjeta-magnetica"><div class="metadato">{titulo}</div><div class="valor-destacado-perf">{valor:,.2f} {unidad}</div></div>"""
+    st.markdown(html, unsafe_allow_html=True)
+
+def renderizar_tarjeta_reservorio(titulo, valor, unidad, delay_class):
+    html = f"""<div class="tarjeta-reservorio {delay_class}"><div class="metadato">{titulo}</div><div class="valor-destacado-res">{valor:,.2f} {unidad}</div></div>"""
+    st.markdown(html, unsafe_allow_html=True)
+
+def inyectar_js_animacion():
+    """Inyecta el script JS (Cyber-Text y Ripple fluido) cumpliendo los requisitos interactivos."""
+    js = """<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const doc = window.parent.document;
+            
+            function iniciarCyberText() {
+                const titulos = doc.querySelectorAll('h1');
+                titulos.forEach(element => {
+                    if (element.dataset.cyberDone) return;
+                    const originalText = element.innerText;
+                    const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*<>";
+                    let iteraciones = 0;
+                    element.dataset.cyberDone = "true";
+                    
+                    const intervalo = setInterval(() => {
+                        element.innerText = originalText.split("").map((letra, index) => {
+                            if (index < iteraciones || letra === " ") return originalText[index];
+                            return caracteres[Math.floor(Math.random() * caracteres.length)];
+                        }).join("");
+                        if (iteraciones >= originalText.length) clearInterval(intervalo);
+                        iteraciones += 0.5;
+                    }, 30);
+                });
+            }
+
+            function configurarRipples() {
+                const botones = doc.querySelectorAll('.stButton > button');
+                botones.forEach(btn => {
+                    if (!btn.dataset.rippleActivo) {
+                        btn.dataset.rippleActivo = "true";
+                        btn.addEventListener('mousedown', function(e) {
+                            const rect = btn.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const y = e.clientY - rect.top;
+                            const ripple = doc.createElement('span');
+                            ripple.classList.add('ripple-fluido');
+                            ripple.style.left = x + 'px';
+                            ripple.style.top = y + 'px';
+                            btn.appendChild(ripple);
+                            setTimeout(() => ripple.remove(), 600);
+                        });
+                    }
+                });
+            }
+
+            const observer = new MutationObserver(() => {
+                iniciarCyberText();
+                configurarRipples();
+            });
+            observer.observe(doc.body, { childList: true, subtree: true });
+            
+            setTimeout(() => { iniciarCyberText(); configurarRipples(); }, 500);
+        });
+    </script>"""
+    components.html(js, height=0)
+
+# --- CONTROLADORES GRÁFICOS MATPLOTLIB PARA MODO OSCURO ---
+
+def configurar_grafico_oscuro(ax, color_acento):
+    """Aplica las configuraciones base para que Matplotlib resalte en el Dark Theme."""
+    ax.set_facecolor('#111A2C')
+    ax.tick_params(colors='#8B9BB4')
+    for spine in ax.spines.values():
+        spine.set_color('#2A3F5F')
+    ax.grid(True, linestyle='--', alpha=0.3, color='#8B9BB4')
+    ax.xaxis.label.set_color(color_acento)
+    ax.yaxis.label.set_color(color_acento)
+
+def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
+    """PANEL PRODUCCIÓN: Acento Naranja (#FF7A00)"""
+    c1, c2, c3 = st.columns(3)
+    with c1: renderizar_tarjeta_produccion("Caudal Actual", qo, "STB/d")
+    with c2: renderizar_tarjeta_produccion("Caudal a Burbuja", qb, "STB/d")
+    with c3: renderizar_tarjeta_produccion("Caudal Máximo", qmax, "STB/d")
+    
+    _, col_graf, _ = st.columns([1, 3, 1])
+    with col_graf:
+        fig, ax = plt.subplots(figsize=(6, 3.5))
+        fig.patch.set_facecolor('#060B15') 
+        configurar_grafico_oscuro(ax, '#FF7A00')
+        
+        ax.plot(q_arr, p_arr, color='#FF7A00', linewidth=2.5, label='Curva IPR')
+        ax.scatter(qo, pwf, color='#00E5FF', s=100, zorder=5, label='Punto Operativo')
+        ax.set_xlabel('Caudal (STB/d)', fontweight='bold')
+        ax.set_ylabel('Pwf (psi)', fontweight='bold')
+        legend = ax.legend(facecolor='#111A2C', edgecolor='#2A3F5F')
+        for text in legend.get_texts(): text.set_color('#F8FAFC')
+        st.pyplot(fig, use_container_width=True)
+
+def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
+    """PANEL PERFORACIÓN: Acento Magenta (#B026FF)"""
+    c1, c2, c3 = st.columns(3)
+    with c1: renderizar_tarjeta_magnetica("Gradiente", gh, "psi/ft")
+    with c2: renderizar_tarjeta_magnetica("P. Hidrostática", ph, "psi")
+    with c3: renderizar_tarjeta_magnetica("Diferencial (\u0394P)", dp, "psi")
+    
+    _, col_graf, _ = st.columns([1, 1, 1])
+    with col_graf:
+        fig, ax = plt.subplots(figsize=(3.5, 5))
+        fig.patch.set_facecolor('#060B15')
+        configurar_grafico_oscuro(ax, '#B026FF')
+        
+        ax.plot([0, ph], [0, tvd], color='#B026FF', linewidth=2.5, label='P. Hidrostática')
+        ax.scatter(pform, tvd, color='#00E5FF', s=100, label='P. Formación')
+        ax.invert_yaxis()
+        ax.set_xlabel('Presión (psi)', fontweight='bold')
+        ax.set_ylabel('Profundidad TVD (ft)', fontweight='bold')
+        legend = ax.legend(facecolor='#111A2C', edgecolor='#2A3F5F')
+        for text in legend.get_texts(): text.set_color('#F8FAFC')
+        st.pyplot(fig, use_container_width=True)
+
+def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
+    """PANEL RESERVORIOS: Acento Teal (#00B4D8)"""
+    c1, c2, c3 = st.columns(3)
+    with c1: renderizar_tarjeta_reservorio("Espesor Neto", hn, "ft", "delay-1")
+    with c2: renderizar_tarjeta_reservorio("POES", p_mmstb, "MMSTB", "delay-2")
+    with c3: renderizar_tarjeta_reservorio("Reservas Rec.", r_mmstb, "MMSTB", "delay-3")
+    
+    _, col_graf, _ = st.columns([1, 2, 1])
+    with col_graf:
+        fig, ax = plt.subplots(figsize=(5, 3.5))
+        fig.patch.set_facecolor('#060B15')
+        configurar_grafico_oscuro(ax, '#00B4D8')
+        
+        ax.bar(['POES Original', 'Recuperable'], [p_mmstb, r_mmstb], color=['#00B4D8', '#00E5FF'], width=0.5)
+        ax.set_ylabel('Volumen (MMSTB)', fontweight='bold')
+        st.pyplot(fig, use_container_width=True)
