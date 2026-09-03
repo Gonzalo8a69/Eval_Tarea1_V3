@@ -1,12 +1,11 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
-import plotly.graph_objects as go # NUEVA IMPORTACIÓN: Librería interactiva
+import plotly.graph_objects as go
 
 def aplicar_estilos():
     """
-    Inyecta CSS global garantizando la separación de responsabilidades.
-    Mantiene el panel lateral azul rey, inputs con borde cian y animaciones.
+    Inyecta CSS global garantizando la separación de responsabilidades visuales y lógicas.
     """
     css = """
     <style>
@@ -236,52 +235,60 @@ def configurar_grafico_oscuro(ax, color_acento):
 
 def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
     """
-    PANEL PRODUCCIÓN: Gráfica migrada a Plotly para ofrecer interactividad 
-    (Hover tooltips) y ajuste dinámico al contenedor.
+    PANEL PRODUCCIÓN: Gráfica migrada a Plotly con diseño optimizado, 
+    fuentes ampliadas y fondo claro para máxima legibilidad.
     """
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_produccion("Caudal Actual", qo, "STB/d")
     with c2: renderizar_tarjeta_produccion("Caudal a Burbuja", qb, "STB/d")
     with c3: renderizar_tarjeta_produccion("Caudal Máximo", qmax, "STB/d")
     
-    # Se ajusta la proporción de columnas para dar más espacio a la gráfica
-    _, col_graf, _ = st.columns([1, 6, 1])
+    # Reducimos las proporciones laterales para que el gráfico ocupe más espacio
+    _, col_graf, _ = st.columns([0.2, 8, 0.2])
     with col_graf:
-        # Creación del gráfico interactivo con Plotly
         fig = go.Figure()
 
-        # Trazado de la Curva IPR
         fig.add_trace(go.Scatter(
             x=q_arr, y=p_arr,
             mode='lines',
             name='Curva IPR',
-            line=dict(color='#FF7A00', width=3),
+            line=dict(color='#FF7A00', width=4),
             hovertemplate='Caudal: %{x:.1f} STB/d<br>Pwf: %{y:.1f} psi<extra></extra>'
         ))
 
-        # Trazado del Punto Operativo
         fig.add_trace(go.Scatter(
             x=[qo], y=[pwf],
             mode='markers',
             name='Punto Operativo',
-            marker=dict(color='#00E5FF', size=14, line=dict(color='#060B15', width=2)),
+            marker=dict(color='#00E5FF', size=16, line=dict(color='#060B15', width=2)),
             hovertemplate='<b>Punto Actual</b><br>Caudal: %{x:.1f} STB/d<br>Pwf: %{y:.1f} psi<extra></extra>'
         ))
 
-        # Configuración del diseño y fondo claro como solicitaste
+        # Configuración avanzada de ejes, fondos claros y leyenda contrastante
         fig.update_layout(
-            plot_bgcolor='#F8FAFC', # Fondo de la cuadrícula claro
-            paper_bgcolor='rgba(0,0,0,0)', # Fondo exterior transparente
-            xaxis_title='Caudal (STB/d)',
-            yaxis_title='Presión de Fondo Pwf (psi)',
-            xaxis=dict(showgrid=True, gridcolor='#E2E8F0', zeroline=False, title_font=dict(color='#8B9BB4', size=14)),
-            yaxis=dict(showgrid=True, gridcolor='#E2E8F0', zeroline=False, title_font=dict(color='#8B9BB4', size=14)),
-            legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99, bgcolor="rgba(255,255,255,0.8)"),
-            margin=dict(l=0, r=0, t=30, b=0),
+            height=500, # Aumenta el tamaño vertical
+            plot_bgcolor='#F4F6F9', 
+            paper_bgcolor='#F4F6F9', 
+            xaxis_title=dict(text='Caudal (STB/d)', font=dict(size=18, color='#060B15', weight='bold')),
+            yaxis_title=dict(text='Presión de Fondo Pwf (psi)', font=dict(size=18, color='#060B15', weight='bold')),
+            xaxis=dict(
+                showgrid=True, gridcolor='#D1D5DB', zeroline=False, 
+                tickfont=dict(size=14, color='#060B15', weight='bold')
+            ),
+            yaxis=dict(
+                showgrid=True, gridcolor='#D1D5DB', zeroline=False, 
+                tickfont=dict(size=14, color='#060B15', weight='bold')
+            ),
+            legend=dict(
+                yanchor="top", y=0.98, xanchor="right", x=0.98, 
+                bgcolor="rgba(255,255,255,0.9)", 
+                bordercolor="#060B15", borderwidth=1,
+                font=dict(size=14, color='#060B15', weight='bold')
+            ),
+            margin=dict(l=20, r=20, t=30, b=20),
             hovermode="closest"
         )
 
-        # Renderizado en Streamlit usando el ancho total del contenedor
         st.plotly_chart(fig, use_container_width=True)
 
 def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
