@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 
 def aplicar_estilos():
     """
-    Inyecta CSS global. Mantiene el Dark Theme SCADA, pero aclara el panel lateral 
-    y transforma el menú de navegación nativo en botones resaltados.
+    Inyecta CSS global garantizando la separación de responsabilidades.
+    Ajusta el color del panel lateral, resalta los botones de navegación 
+    y empareja los bordes de los inputs con el sidebar.
     """
     css = """
     <style>
@@ -19,10 +20,16 @@ def aplicar_estilos():
         .metadato-home { color: #8B9BB4 !important; font-size: 1.1rem !important; text-transform: uppercase; text-align: center; display: block; margin-bottom: 2.5rem; font-weight: bold; }
         .metadato { color: #8B9BB4 !important; font-size: 0.875rem !important; text-transform: uppercase; font-weight: 600; }
         
-        /* --- CORRECCIÓN DEFINITIVA DE CAJAS DE ENTRADA (INPUTS) --- */
+        /* --- NAVEGACIÓN LATERAL (SIDEBAR) --- */
+        [data-testid="stSidebar"] { 
+            background-color: #151E2D !important; /* Panel lateral claro */
+            border-right: 1px solid #2A3F5F; 
+        }
+        
+        /* --- CORRECCIÓN DE CAJAS DE ENTRADA (INPUTS) --- */
         div[data-baseweb="input"] { 
             background-color: #111A2C !important; 
-            border: 1px solid #2A3F5F !important; 
+            border: 2px solid #151E2D !important; /* Borde resaltado igual al color del sidebar */
             border-radius: 6px !important; 
         }
         div[data-baseweb="input"]:focus-within { 
@@ -36,26 +43,20 @@ def aplicar_estilos():
             font-size: 1.1rem !important; 
         }
         
-        /* --- NUEVO: NAVEGACIÓN LATERAL (SIDEBAR) CLARA --- */
-        [data-testid="stSidebar"] { 
-            background-color: #151E2D !important; /* Más claro que el fondo #060B15 */
-            border-right: 1px solid #2A3F5F; 
-        }
-        
-        /* --- NUEVO: OPCIONES DEL MENÚ COMO BOTONES RESALTADOS --- */
+        /* --- OPCIONES DEL MENÚ COMO BOTONES RESALTADOS (Home y Ejercicios) --- */
         [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label {
-            background-color: #23354E !important; /* Color de botón diferenciado */
+            background-color: #3282B8 !important; /* Botones resaltados con otro color acorde */
             padding: 12px 15px !important;
             border-radius: 8px !important;
             margin-bottom: 12px !important;
-            border: 1px solid #2A3F5F !important;
+            border: 1px solid #00E5FF !important;
             transition: all 0.3s ease !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
         }
         [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label:hover {
-            background-color: #3282B8 !important; /* Brillo al pasar el cursor */
-            border-color: #00E5FF !important;
-            transform: translateX(3px); /* Pequeño empuje visual */
+            background-color: #00E5FF !important; /* Brillo cian al pasar el cursor */
+            border-color: #F8FAFC !important;
+            transform: translateX(4px); /* Pequeño empuje visual */
         }
         [data-testid="stSidebar"] .stRadio label p,
         [data-testid="stSidebar"] .stRadio label div { 
@@ -64,6 +65,10 @@ def aplicar_estilos():
             color: #F8FAFC !important; 
             padding: 0 !important; 
             margin: 0 !important;
+            transition: color 0.3s ease !important;
+        }
+        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label:hover p {
+            color: #060B15 !important; /* Oscurece el texto al hacer hover para mayor contraste */
         }
         
         /* --- TABS (PRODUCCIÓN, PERFORACIÓN, RESERVORIOS) --- */
