@@ -22,7 +22,7 @@ def aplicar_estilos():
         
         /* --- NAVEGACIÓN LATERAL (SIDEBAR) --- */
         [data-testid="stSidebar"] { 
-            background-color: #1A56B6 !important; /* Panel lateral ajustado al color de la imagen */
+            background-color: #0127C0 !important; /* Panel lateral ajustado al color de la imagen */
             border-right: 1px solid #2A3F5F; 
         }
         
