@@ -15,7 +15,7 @@ menu = st.sidebar.radio("Navegación", ["Home", "Ejercicios"])
 if menu == "Home":
     st.markdown("<h1>Aplicación de Análisis de Datos para Oil & Gas</h1>", unsafe_allow_html=True)
     st.markdown("<h3>Desarrollado por: JOSE GONZALO OCHOA PAZ</h3>", unsafe_allow_html=True)
-    st.markdown("<span class='metadato-home'>Curso: Bootcamp Data Analytics for Oil & Gas</span>", unsafe_allow_html=True)
+    st.markdown("<span class='metadato-home'>Programa: Bootcamp Data Analytics for Oil & Gas</span>", unsafe_allow_html=True)
     
     texto_proposito = (
         "Esta aplicación web está diseñada para ejecutar cálculos críticos de ingeniería petrolera. "
