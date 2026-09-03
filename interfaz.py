@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 def aplicar_estilos():
     """
     Inyecta CSS global garantizando la separación de responsabilidades.
-    Ajusta el color del panel lateral, resalta los botones de navegación 
-    y empareja los bordes de los inputs con el sidebar.
+    Ajusta el color del panel lateral a la imagen de referencia y 
+    aplica bordes Cyan a todas las cajas de entrada.
     """
     css = """
     <style>
@@ -22,19 +22,19 @@ def aplicar_estilos():
         
         /* --- NAVEGACIÓN LATERAL (SIDEBAR) --- */
         [data-testid="stSidebar"] { 
-            background-color: #151E2D !important; /* Panel lateral claro */
+            background-color: #1A56B6 !important; /* Panel lateral ajustado al color de la imagen */
             border-right: 1px solid #2A3F5F; 
         }
         
         /* --- CORRECCIÓN DE CAJAS DE ENTRADA (INPUTS) --- */
         div[data-baseweb="input"] { 
             background-color: #111A2C !important; 
-            border: 2px solid #151E2D !important; /* Borde resaltado igual al color del sidebar */
+            border: 2px solid #00E5FF !important; /* Borde Cyan #00E5FF aplicado a todas las cajas */
             border-radius: 6px !important; 
         }
         div[data-baseweb="input"]:focus-within { 
             border-color: #00E5FF !important; 
-            box-shadow: 0 0 8px rgba(0, 229, 255, 0.4) !important; 
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.6) !important; /* Resplandor más fuerte al hacer clic */
         }
         div[data-baseweb="input"] input { 
             color: #00E5FF !important; 
@@ -45,7 +45,7 @@ def aplicar_estilos():
         
         /* --- OPCIONES DEL MENÚ COMO BOTONES RESALTADOS (Home y Ejercicios) --- */
         [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label {
-            background-color: #3282B8 !important; /* Botones resaltados con otro color acorde */
+            background-color: #3282B8 !important; 
             padding: 12px 15px !important;
             border-radius: 8px !important;
             margin-bottom: 12px !important;
@@ -54,9 +54,9 @@ def aplicar_estilos():
             box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
         }
         [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label:hover {
-            background-color: #00E5FF !important; /* Brillo cian al pasar el cursor */
+            background-color: #00E5FF !important; 
             border-color: #F8FAFC !important;
-            transform: translateX(4px); /* Pequeño empuje visual */
+            transform: translateX(4px); 
         }
         [data-testid="stSidebar"] .stRadio label p,
         [data-testid="stSidebar"] .stRadio label div { 
@@ -68,7 +68,7 @@ def aplicar_estilos():
             transition: color 0.3s ease !important;
         }
         [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label:hover p {
-            color: #060B15 !important; /* Oscurece el texto al hacer hover para mayor contraste */
+            color: #060B15 !important; 
         }
         
         /* --- TABS (PRODUCCIÓN, PERFORACIÓN, RESERVORIOS) --- */
