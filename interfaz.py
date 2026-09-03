@@ -235,15 +235,16 @@ def configurar_grafico_oscuro(ax, color_acento):
 
 def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
     """
-    PANEL PRODUCCIÓN: Gráfica migrada a Plotly con diseño optimizado, 
-    fuentes ampliadas y fondo claro para máxima legibilidad.
+    PANEL PRODUCCIÓN: Gráfica migrada a Plotly con diseño optimizado.
+    Título embebido de forma nativa para garantizar su correcta visualización.
     """
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_produccion("Caudal Actual", qo, "STB/d")
     with c2: renderizar_tarjeta_produccion("Caudal a Burbuja", qb, "STB/d")
     with c3: renderizar_tarjeta_produccion("Caudal Máximo", qmax, "STB/d")
     
-    # Reducimos las proporciones laterales para que el gráfico ocupe más espacio
+    st.markdown("<br>", unsafe_allow_html=True)
+    
     _, col_graf, _ = st.columns([0.2, 8, 0.2])
     with col_graf:
         fig = go.Figure()
@@ -264,9 +265,14 @@ def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
             hovertemplate='<b>Punto Actual</b><br>Caudal: %{x:.1f} STB/d<br>Pwf: %{y:.1f} psi<extra></extra>'
         ))
 
-        # Configuración avanzada de ejes, fondos claros y leyenda contrastante
         fig.update_layout(
-            height=500, # Aumenta el tamaño vertical
+            title=dict(
+                text='Análisis de Desempeño de Afluencia (Curva IPR)',
+                font=dict(size=22, color='#060B15', weight='bold'),
+                x=0.5, # Alineación centrada
+                y=0.95
+            ),
+            height=550, # Incrementado ligeramente para acomodar el título
             plot_bgcolor='#F4F6F9', 
             paper_bgcolor='#F4F6F9', 
             xaxis_title=dict(text='Caudal (STB/d)', font=dict(size=18, color='#060B15', weight='bold')),
@@ -280,12 +286,12 @@ def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
                 tickfont=dict(size=14, color='#060B15', weight='bold')
             ),
             legend=dict(
-                yanchor="top", y=0.98, xanchor="right", x=0.98, 
+                yanchor="top", y=0.85, xanchor="right", x=0.98, 
                 bgcolor="rgba(255,255,255,0.9)", 
                 bordercolor="#060B15", borderwidth=1,
                 font=dict(size=14, color='#060B15', weight='bold')
             ),
-            margin=dict(l=20, r=20, t=30, b=20),
+            margin=dict(l=20, r=20, t=60, b=20), # Ajustado el margen top (t) para dar espacio al título
             hovermode="closest"
         )
 
