@@ -1,13 +1,12 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go # NUEVA IMPORTACIÓN: Librería interactiva
 
 def aplicar_estilos():
     """
     Inyecta CSS global garantizando la separación de responsabilidades.
-    Restaura y aplica los efectos de interactividad (hover y resplandor) 
-    para las tarjetas del panel de Reservorios, manteniendo intactos 
-    los estilos previos del sidebar, inputs y demás tabs.
+    Mantiene el panel lateral azul rey, inputs con borde cian y animaciones.
     """
     css = """
     <style>
@@ -25,7 +24,7 @@ def aplicar_estilos():
         section[data-testid="stSidebar"], 
         section[data-testid="stSidebar"] > div:first-child,
         section[data-testid="stSidebar"] > div:first-child > div { 
-            background-color: #B6B9C1 !important; 
+            background-color: #1A56B6 !important; 
         }
         section[data-testid="stSidebar"] {
             border-right: 1px solid #2A3F5F !important; 
@@ -134,9 +133,8 @@ def aplicar_estilos():
             background-color: #111A2C; padding: 20px; border-radius: 8px;
             border-left: 4px solid #00B4D8; margin-bottom: 1rem; border: 1px solid #1A273D;
             opacity: 0; animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
-            transition: all 0.3s ease; /* Transición agregada para permitir el hover suave */
+            transition: all 0.3s ease; 
         }
-        /* Efecto Hover restaurado para Reservorios */
         .tarjeta-reservorio:hover {
             border-color: #00B4D8;
             box-shadow: 0 6px 15px rgba(0, 180, 216, 0.4);
@@ -225,8 +223,9 @@ def inyectar_js_animacion():
     </script>"""
     components.html(js, height=0)
 
-# --- CONTROLADORES GRÁFICOS MATPLOTLIB ---
+# --- CONTROLADORES GRÁFICOS ---
 def configurar_grafico_oscuro(ax, color_acento):
+    """Configuración para las gráficas que aún utilizan Matplotlib."""
     ax.set_facecolor('#111A2C')
     ax.tick_params(colors='#8B9BB4')
     for spine in ax.spines.values():
@@ -236,23 +235,54 @@ def configurar_grafico_oscuro(ax, color_acento):
     ax.yaxis.label.set_color(color_acento)
 
 def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
+    """
+    PANEL PRODUCCIÓN: Gráfica migrada a Plotly para ofrecer interactividad 
+    (Hover tooltips) y ajuste dinámico al contenedor.
+    """
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_produccion("Caudal Actual", qo, "STB/d")
     with c2: renderizar_tarjeta_produccion("Caudal a Burbuja", qb, "STB/d")
     with c3: renderizar_tarjeta_produccion("Caudal Máximo", qmax, "STB/d")
     
-    _, col_graf, _ = st.columns([1, 3, 1])
+    # Se ajusta la proporción de columnas para dar más espacio a la gráfica
+    _, col_graf, _ = st.columns([1, 6, 1])
     with col_graf:
-        fig, ax = plt.subplots(figsize=(6, 3.5))
-        fig.patch.set_facecolor('#060B15') 
-        configurar_grafico_oscuro(ax, '#FF7A00')
-        ax.plot(q_arr, p_arr, color='#FF7A00', linewidth=2.5, label='Curva IPR')
-        ax.scatter(qo, pwf, color='#00E5FF', s=100, zorder=5, label='Punto Operativo')
-        ax.set_xlabel('Caudal (STB/d)', fontweight='bold')
-        ax.set_ylabel('Pwf (psi)', fontweight='bold')
-        legend = ax.legend(facecolor='#111A2C', edgecolor='#2A3F5F')
-        for text in legend.get_texts(): text.set_color('#F8FAFC')
-        st.pyplot(fig, use_container_width=True)
+        # Creación del gráfico interactivo con Plotly
+        fig = go.Figure()
+
+        # Trazado de la Curva IPR
+        fig.add_trace(go.Scatter(
+            x=q_arr, y=p_arr,
+            mode='lines',
+            name='Curva IPR',
+            line=dict(color='#FF7A00', width=3),
+            hovertemplate='Caudal: %{x:.1f} STB/d<br>Pwf: %{y:.1f} psi<extra></extra>'
+        ))
+
+        # Trazado del Punto Operativo
+        fig.add_trace(go.Scatter(
+            x=[qo], y=[pwf],
+            mode='markers',
+            name='Punto Operativo',
+            marker=dict(color='#00E5FF', size=14, line=dict(color='#060B15', width=2)),
+            hovertemplate='<b>Punto Actual</b><br>Caudal: %{x:.1f} STB/d<br>Pwf: %{y:.1f} psi<extra></extra>'
+        ))
+
+        # Configuración del diseño y fondo claro como solicitaste
+        fig.update_layout(
+            plot_bgcolor='#F8FAFC', # Fondo de la cuadrícula claro
+            paper_bgcolor='rgba(0,0,0,0)', # Fondo exterior transparente
+            xaxis_title='Caudal (STB/d)',
+            yaxis_title='Presión de Fondo Pwf (psi)',
+            xaxis=dict(showgrid=True, gridcolor='#E2E8F0', zeroline=False, title_font=dict(color='#8B9BB4', size=14)),
+            yaxis=dict(showgrid=True, gridcolor='#E2E8F0', zeroline=False, title_font=dict(color='#8B9BB4', size=14)),
+            legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99, bgcolor="rgba(255,255,255,0.8)"),
+            margin=dict(l=0, r=0, t=30, b=0),
+            hovermode="closest"
+        )
+
+        # Renderizado en Streamlit usando el ancho total del contenedor
+        st.plotly_chart(fig, use_container_width=True)
 
 def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
     c1, c2, c3 = st.columns(3)
