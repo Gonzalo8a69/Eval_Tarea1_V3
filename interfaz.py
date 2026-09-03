@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 def aplicar_estilos():
     """
-    Inyecta CSS global. Transforma la app a un Dark Theme corporativo.
-    Soluciona el conflicto de legibilidad de inputs entre Modo Claro/Oscuro de Streamlit.
+    Inyecta CSS global. Mantiene el Dark Theme SCADA, pero aclara el panel lateral 
+    y transforma el menú de navegación nativo en botones resaltados.
     """
     css = """
     <style>
@@ -29,7 +29,6 @@ def aplicar_estilos():
             border-color: #00E5FF !important; 
             box-shadow: 0 0 8px rgba(0, 229, 255, 0.4) !important; 
         }
-        /* El -webkit-text-fill-color evita que el Modo Claro de Streamlit vuelva invisible el texto */
         div[data-baseweb="input"] input { 
             color: #00E5FF !important; 
             -webkit-text-fill-color: #00E5FF !important; 
@@ -37,11 +36,37 @@ def aplicar_estilos():
             font-size: 1.1rem !important; 
         }
         
-        /* --- NAVEGACIÓN Y TABS --- */
-        [data-testid="stSidebar"] { background-color: #0B1221 !important; border-right: 1px solid #1A273D; }
-        [data-testid="stSidebar"] .stRadio label p,
-        [data-testid="stSidebar"] .stRadio label div { font-size: 1.3rem !important; font-weight: 600 !important; color: #8B9BB4 !important; padding: 10px 0; }
+        /* --- NUEVO: NAVEGACIÓN LATERAL (SIDEBAR) CLARA --- */
+        [data-testid="stSidebar"] { 
+            background-color: #151E2D !important; /* Más claro que el fondo #060B15 */
+            border-right: 1px solid #2A3F5F; 
+        }
         
+        /* --- NUEVO: OPCIONES DEL MENÚ COMO BOTONES RESALTADOS --- */
+        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label {
+            background-color: #23354E !important; /* Color de botón diferenciado */
+            padding: 12px 15px !important;
+            border-radius: 8px !important;
+            margin-bottom: 12px !important;
+            border: 1px solid #2A3F5F !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+        }
+        [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label:hover {
+            background-color: #3282B8 !important; /* Brillo al pasar el cursor */
+            border-color: #00E5FF !important;
+            transform: translateX(3px); /* Pequeño empuje visual */
+        }
+        [data-testid="stSidebar"] .stRadio label p,
+        [data-testid="stSidebar"] .stRadio label div { 
+            font-size: 1.25rem !important; 
+            font-weight: 700 !important; 
+            color: #F8FAFC !important; 
+            padding: 0 !important; 
+            margin: 0 !important;
+        }
+        
+        /* --- TABS (PRODUCCIÓN, PERFORACIÓN, RESERVORIOS) --- */
         [data-testid="stTabs"] button[data-baseweb="tab"] p,
         [data-testid="stTabs"] button[data-baseweb="tab"] div { font-size: 1.3rem !important; font-weight: bold !important; color: #8B9BB4 !important; }
         [data-testid="stTabs"] button[aria-selected="true"] p { color: #00E5FF !important; text-shadow: 0 0 8px rgba(0, 229, 255, 0.5); }
@@ -56,7 +81,7 @@ def aplicar_estilos():
         /* --- TAB PRODUCCIÓN: TARJETAS Y BOTONES --- */
         .tarjeta-produccion {
             background-color: #111A2C; padding: 20px; border-radius: 8px;
-            border-left: 4px solid #FF7A00; margin-bottom: 1rem; border-right: 1px solid #1A273D; border-top: 1px solid #1A273D; border-bottom: 1px solid #1A273D;
+            border-left: 4px solid #FF7A00; margin-bottom: 1rem; border: 1px solid #1A273D;
         }
         .valor-destacado-prod { font-size: 1.85rem !important; font-weight: 900; color: #F8FAFC; margin-top: 5px; text-shadow: 0 0 10px rgba(255, 122, 0, 0.2); }
         
@@ -77,7 +102,7 @@ def aplicar_estilos():
         /* --- TAB PERFORACIÓN: TARJETAS MAGNÉTICAS 3D --- */
         .tarjeta-magnetica {
             background-color: #111A2C; padding: 20px; border-radius: 8px;
-            border-left: 4px solid #B026FF; margin-bottom: 1rem; border-right: 1px solid #1A273D; border-top: 1px solid #1A273D; border-bottom: 1px solid #1A273D;
+            border-left: 4px solid #B026FF; margin-bottom: 1rem; border: 1px solid #1A273D;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
             transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1);
         }
@@ -90,7 +115,7 @@ def aplicar_estilos():
         /* --- TAB RESERVORIOS: POP-IN CASCADA --- */
         .tarjeta-reservorio {
             background-color: #111A2C; padding: 20px; border-radius: 8px;
-            border-left: 4px solid #00B4D8; margin-bottom: 1rem; border-right: 1px solid #1A273D; border-top: 1px solid #1A273D; border-bottom: 1px solid #1A273D;
+            border-left: 4px solid #00B4D8; margin-bottom: 1rem; border: 1px solid #1A273D;
             opacity: 0; animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
         }
         .delay-1 { animation-delay: 0.1s; }
@@ -102,8 +127,7 @@ def aplicar_estilos():
     """
     st.markdown(css, unsafe_allow_html=True)
 
-# --- FUNCIONES DE RENDERIZADO DE COMPONENTES HTML ---
-
+# --- FUNCIONES DE RENDERIZADO HTML ---
 def renderizar_tarjeta_info(texto):
     html = f"""<div class="tarjeta-info"><p class="texto-principal">{texto}</p></div>"""
     st.markdown(html, unsafe_allow_html=True)
@@ -120,8 +144,8 @@ def renderizar_tarjeta_reservorio(titulo, valor, unidad, delay_class):
     html = f"""<div class="tarjeta-reservorio {delay_class}"><div class="metadato">{titulo}</div><div class="valor-destacado-res">{valor:,.2f} {unidad}</div></div>"""
     st.markdown(html, unsafe_allow_html=True)
 
+# --- INTERACTIVIDAD JS ---
 def inyectar_js_animacion():
-    """Inyecta el script JS (Cyber-Text y Ripple fluido) cumpliendo los requisitos interactivos."""
     js = """<script>
         document.addEventListener("DOMContentLoaded", function() {
             const doc = window.parent.document;
@@ -177,10 +201,8 @@ def inyectar_js_animacion():
     </script>"""
     components.html(js, height=0)
 
-# --- CONTROLADORES GRÁFICOS MATPLOTLIB PARA MODO OSCURO ---
-
+# --- CONTROLADORES GRÁFICOS MATPLOTLIB ---
 def configurar_grafico_oscuro(ax, color_acento):
-    """Aplica las configuraciones base para que Matplotlib resalte en el Dark Theme."""
     ax.set_facecolor('#111A2C')
     ax.tick_params(colors='#8B9BB4')
     for spine in ax.spines.values():
@@ -190,7 +212,6 @@ def configurar_grafico_oscuro(ax, color_acento):
     ax.yaxis.label.set_color(color_acento)
 
 def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
-    """PANEL PRODUCCIÓN: Acento Naranja (#FF7A00)"""
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_produccion("Caudal Actual", qo, "STB/d")
     with c2: renderizar_tarjeta_produccion("Caudal a Burbuja", qb, "STB/d")
@@ -201,7 +222,6 @@ def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
         fig, ax = plt.subplots(figsize=(6, 3.5))
         fig.patch.set_facecolor('#060B15') 
         configurar_grafico_oscuro(ax, '#FF7A00')
-        
         ax.plot(q_arr, p_arr, color='#FF7A00', linewidth=2.5, label='Curva IPR')
         ax.scatter(qo, pwf, color='#00E5FF', s=100, zorder=5, label='Punto Operativo')
         ax.set_xlabel('Caudal (STB/d)', fontweight='bold')
@@ -211,7 +231,6 @@ def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
         st.pyplot(fig, use_container_width=True)
 
 def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
-    """PANEL PERFORACIÓN: Acento Magenta (#B026FF)"""
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_magnetica("Gradiente", gh, "psi/ft")
     with c2: renderizar_tarjeta_magnetica("P. Hidrostática", ph, "psi")
@@ -222,7 +241,6 @@ def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
         fig, ax = plt.subplots(figsize=(3.5, 5))
         fig.patch.set_facecolor('#060B15')
         configurar_grafico_oscuro(ax, '#B026FF')
-        
         ax.plot([0, ph], [0, tvd], color='#B026FF', linewidth=2.5, label='P. Hidrostática')
         ax.scatter(pform, tvd, color='#00E5FF', s=100, label='P. Formación')
         ax.invert_yaxis()
@@ -233,7 +251,6 @@ def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
         st.pyplot(fig, use_container_width=True)
 
 def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
-    """PANEL RESERVORIOS: Acento Teal (#00B4D8)"""
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_reservorio("Espesor Neto", hn, "ft", "delay-1")
     with c2: renderizar_tarjeta_reservorio("POES", p_mmstb, "MMSTB", "delay-2")
@@ -244,7 +261,6 @@ def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
         fig, ax = plt.subplots(figsize=(5, 3.5))
         fig.patch.set_facecolor('#060B15')
         configurar_grafico_oscuro(ax, '#00B4D8')
-        
         ax.bar(['POES Original', 'Recuperable'], [p_mmstb, r_mmstb], color=['#00B4D8', '#00E5FF'], width=0.5)
         ax.set_ylabel('Volumen (MMSTB)', fontweight='bold')
         st.pyplot(fig, use_container_width=True)
