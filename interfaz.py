@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 def aplicar_estilos():
     """
     Inyecta CSS global garantizando la separación de responsabilidades.
-    Ajusta el color del panel lateral a la imagen de referencia y 
-    aplica bordes Cyan a todas las cajas de entrada.
+    Restaura los efectos dinámicos de las tarjetas de Producción y mantiene 
+    los colores de inputs y panel lateral previamente configurados.
     """
     css = """
     <style>
@@ -21,20 +21,24 @@ def aplicar_estilos():
         .metadato { color: #8B9BB4 !important; font-size: 0.875rem !important; text-transform: uppercase; font-weight: 600; }
         
         /* --- NAVEGACIÓN LATERAL (SIDEBAR) --- */
-        [data-testid="stSidebar"] { 
-            background-color: #0B1630 !important; /* Panel lateral ajustado al color de la imagen */
-            border-right: 1px solid #2A3F5F; 
+        section[data-testid="stSidebar"], 
+        section[data-testid="stSidebar"] > div:first-child,
+        section[data-testid="stSidebar"] > div:first-child > div { 
+            background-color: #1A56B6 !important; 
+        }
+        section[data-testid="stSidebar"] {
+            border-right: 1px solid #2A3F5F !important; 
         }
         
-        /* --- CORRECCIÓN DE CAJAS DE ENTRADA (INPUTS) --- */
+        /* --- CAJAS DE ENTRADA (INPUTS) --- */
         div[data-baseweb="input"] { 
             background-color: #111A2C !important; 
-            border: 2px solid #00E5FF !important; /* Borde Cyan #00E5FF aplicado a todas las cajas */
+            border: 2px solid #00E5FF !important; 
             border-radius: 6px !important; 
         }
         div[data-baseweb="input"]:focus-within { 
             border-color: #00E5FF !important; 
-            box-shadow: 0 0 8px rgba(0, 229, 255, 0.6) !important; /* Resplandor más fuerte al hacer clic */
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.6) !important; 
         }
         div[data-baseweb="input"] input { 
             color: #00E5FF !important; 
@@ -43,7 +47,7 @@ def aplicar_estilos():
             font-size: 1.1rem !important; 
         }
         
-        /* --- OPCIONES DEL MENÚ COMO BOTONES RESALTADOS (Home y Ejercicios) --- */
+        /* --- OPCIONES DEL MENÚ (Home y Ejercicios) --- */
         [data-testid="stSidebar"] .stRadio > div[role="radiogroup"] > label {
             background-color: #3282B8 !important; 
             padding: 12px 15px !important;
@@ -71,7 +75,7 @@ def aplicar_estilos():
             color: #060B15 !important; 
         }
         
-        /* --- TABS (PRODUCCIÓN, PERFORACIÓN, RESERVORIOS) --- */
+        /* --- TABS --- */
         [data-testid="stTabs"] button[data-baseweb="tab"] p,
         [data-testid="stTabs"] button[data-baseweb="tab"] div { font-size: 1.3rem !important; font-weight: bold !important; color: #8B9BB4 !important; }
         [data-testid="stTabs"] button[aria-selected="true"] p { color: #00E5FF !important; text-shadow: 0 0 8px rgba(0, 229, 255, 0.5); }
@@ -87,6 +91,13 @@ def aplicar_estilos():
         .tarjeta-produccion {
             background-color: #111A2C; padding: 20px; border-radius: 8px;
             border-left: 4px solid #FF7A00; margin-bottom: 1rem; border: 1px solid #1A273D;
+            transition: all 0.3s ease; /* Transición restaurada */
+        }
+        /* Efecto Hover restaurado para las tarjetas de producción */
+        .tarjeta-produccion:hover {
+            border-color: #FF7A00;
+            box-shadow: 0 6px 15px rgba(255, 122, 0, 0.3);
+            transform: translateY(-3px);
         }
         .valor-destacado-prod { font-size: 1.85rem !important; font-weight: 900; color: #F8FAFC; margin-top: 5px; text-shadow: 0 0 10px rgba(255, 122, 0, 0.2); }
         
@@ -97,6 +108,7 @@ def aplicar_estilos():
         }
         .stButton>button:hover { border-color: #FF7A00 !important; box-shadow: 0 0 15px rgba(255, 122, 0, 0.4) !important; color: #FF7A00 !important; }
         
+        /* Ripple JavaScript */
         .ripple-fluido {
             position: absolute; background: radial-gradient(circle, rgba(255, 122, 0, 0.8) 0%, rgba(255, 122, 0, 0) 70%);
             border-radius: 50%; transform: scale(0); animation: animacionRippleLiq 0.8s cubic-bezier(0.1, 0.7, 0.3, 1);
