@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 def aplicar_estilos():
     """
     Inyecta CSS global garantizando la separación de responsabilidades.
-    Restaura los efectos dinámicos de las tarjetas de Producción y mantiene 
-    los colores de inputs y panel lateral previamente configurados.
+    Restaura y aplica los efectos de interactividad (hover y resplandor) 
+    para las tarjetas del panel de Reservorios, manteniendo intactos 
+    los estilos previos del sidebar, inputs y demás tabs.
     """
     css = """
     <style>
@@ -91,9 +92,8 @@ def aplicar_estilos():
         .tarjeta-produccion {
             background-color: #111A2C; padding: 20px; border-radius: 8px;
             border-left: 4px solid #FF7A00; margin-bottom: 1rem; border: 1px solid #1A273D;
-            transition: all 0.3s ease; /* Transición restaurada */
+            transition: all 0.3s ease;
         }
-        /* Efecto Hover restaurado para las tarjetas de producción */
         .tarjeta-produccion:hover {
             border-color: #FF7A00;
             box-shadow: 0 6px 15px rgba(255, 122, 0, 0.3);
@@ -129,11 +129,18 @@ def aplicar_estilos():
         }
         .valor-destacado-perf { font-size: 1.85rem !important; font-weight: 900; color: #F8FAFC; margin-top: 5px; text-shadow: 0 0 10px rgba(176, 38, 255, 0.2); }
 
-        /* --- TAB RESERVORIOS: POP-IN CASCADA --- */
+        /* --- TAB RESERVORIOS: POP-IN CASCADA Y HOVER --- */
         .tarjeta-reservorio {
             background-color: #111A2C; padding: 20px; border-radius: 8px;
             border-left: 4px solid #00B4D8; margin-bottom: 1rem; border: 1px solid #1A273D;
             opacity: 0; animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+            transition: all 0.3s ease; /* Transición agregada para permitir el hover suave */
+        }
+        /* Efecto Hover restaurado para Reservorios */
+        .tarjeta-reservorio:hover {
+            border-color: #00B4D8;
+            box-shadow: 0 6px 15px rgba(0, 180, 216, 0.4);
+            transform: translateY(-3px) scale(1.02);
         }
         .delay-1 { animation-delay: 0.1s; }
         .delay-2 { animation-delay: 0.3s; }
