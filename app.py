@@ -19,7 +19,7 @@ if menu == "Home":
     
     texto_proposito = (
         "Esta aplicación web está diseñada para ejecutar cálculos críticos de ingeniería petrolera. "
-        "A través de un enfoque modular, presenta escenarios técnicos en las áreas de Producción, Perforación "
+        "Basada en un enfoque modular, presenta escenarios técnicos en las áreas de Producción, Perforación "
         "y Reservorios, integrando visualizaciones dinámicas y análisis paramétrico para la toma de decisiones."
     )
     renderizar_tarjeta_info(texto_proposito)
