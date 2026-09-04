@@ -225,13 +225,7 @@ def inyectar_js_animacion():
 # --- CONTROLADORES GRÁFICOS ---
 def configurar_grafico_oscuro(ax, color_acento):
     """Configuración residual para las gráficas que aún utilicen Matplotlib."""
-    ax.set_facecolor('#111A2C')
-    ax.tick_params(colors='#8B9BB4')
-    for spine in ax.spines.values():
-        spine.set_color('#2A3F5F')
-    ax.grid(True, linestyle='--', alpha=0.3, color='#8B9BB4')
-    ax.xaxis.label.set_color(color_acento)
-    ax.yaxis.label.set_color(color_acento)
+    pass
 
 def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
     """PANEL PRODUCCIÓN"""
@@ -295,26 +289,20 @@ def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
         st.plotly_chart(fig, use_container_width=True)
 
 def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
-    """
-    PANEL PERFORACIÓN:
-    Genera un banner visual dinámico basado en el Diferencial de Presión y 
-    dibuja el perfil hidrostático utilizando Plotly.
-    """
-    # 1. Lógica Visual del Indicador de Condición
+    """PANEL PERFORACIÓN"""
     if dp > 50:
         estado = "SOBREBALANCE (ΔP > 0)"
-        color_borde = "#00B4D8" # Teal/Cyan
+        color_borde = "#00B4D8" 
         mensaje = "La presión hidrostática supera a la de formación. El pozo está bajo control."
     elif abs(dp) <= 50:
         estado = "BALANCE APROXIMADO (ΔP ≈ 0)"
-        color_borde = "#FF7A00" # Naranja
+        color_borde = "#FF7A00" 
         mensaje = "La presión hidrostática está en equilibrio con la formación."
     else:
         estado = "BAJO BALANCE (ΔP < 0) - ¡ALERTA!"
-        color_borde = "#FF2A2A" # Rojo
+        color_borde = "#FF2A2A" 
         mensaje = "La presión de formación supera a la hidrostática. Riesgo inminente de influjo (Kick)."
 
-    # Inyección HTML para el banner de estado
     html_estado = f"""
     <div style="background-color: #111A2C; border: 1px solid #1A273D; border-left: 6px solid {color_borde}; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.4);">
         <h3 style="color: {color_borde}; margin-top: 0; margin-bottom: 5px; font-size: 1.5rem; text-shadow: 0 0 8px {color_borde}60;">ESTADO OPERATIVO: {estado}</h3>
@@ -323,7 +311,6 @@ def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
     """
     st.markdown(html_estado, unsafe_allow_html=True)
 
-    # 2. Tarjetas de métricas
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_magnetica("Gradiente", gh, "psi/ft")
     with c2: renderizar_tarjeta_magnetica("P. Hidrostática", ph, "psi")
@@ -331,30 +318,26 @@ def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # 3. Gráfico Interactivo de Perfil de Presión con Plotly
     _, col_graf, _ = st.columns([0.2, 8, 0.2])
     with col_graf:
         fig = go.Figure()
 
-        # Línea de Presión Hidrostática
         fig.add_trace(go.Scatter(
             x=[0, ph], y=[0, tvd],
             mode='lines',
             name='P. Hidrostática',
-            line=dict(color='#B026FF', width=4), # Color morado solicitado
+            line=dict(color='#B026FF', width=4),
             hovertemplate='Presión: %{x:.1f} psi<br>Profundidad: %{y:.1f} ft<extra></extra>'
         ))
 
-        # Punto de Presión de Formación
         fig.add_trace(go.Scatter(
             x=[pform], y=[tvd],
             mode='markers',
             name='P. Formación',
-            marker=dict(color='#00E5FF', size=16, line=dict(color='#060B15', width=2)), # Color cian solicitado
+            marker=dict(color='#00E5FF', size=16, line=dict(color='#060B15', width=2)), 
             hovertemplate='<b>Formación</b><br>Presión: %{x:.1f} psi<br>Profundidad: %{y:.1f} ft<extra></extra>'
         ))
 
-        # Layout ajustado al diseño de Producción
         fig.update_layout(
             title=dict(
                 text='Perfil de Presión Hidrostática vs TVD',
@@ -373,7 +356,7 @@ def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
             ),
             yaxis=dict(
                 showgrid=True, gridcolor='#D1D5DB', zeroline=False, 
-                autorange='reversed', # Invierte el eje Y para que la profundidad vaya hacia abajo
+                autorange='reversed', 
                 tickfont=dict(size=14, color='#060B15', weight='bold')
             ),
             legend=dict(
@@ -389,17 +372,59 @@ def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
         st.plotly_chart(fig, use_container_width=True)
 
 def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
-    """PANEL RESERVORIOS"""
+    """
+    PANEL RESERVORIOS:
+    Se generan gráficas de barras comparativas utilizando Plotly para cumplir
+    con los requisitos visuales de la rúbrica, garantizando colores llamativos.
+    """
+    # Cálculo para visualización en STB y cumplir con mostrar ambas unidades sin alterar parámetros de app.py
+    p_stb = p_mmstb * 1_000_000
+    r_stb = r_mmstb * 1_000_000
+
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_reservorio("Espesor Neto", hn, "ft", "delay-1")
     with c2: renderizar_tarjeta_reservorio("POES", p_mmstb, "MMSTB", "delay-2")
     with c3: renderizar_tarjeta_reservorio("Reservas Rec.", r_mmstb, "MMSTB", "delay-3")
     
-    _, col_graf, _ = st.columns([1, 2, 1])
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    _, col_graf, _ = st.columns([0.2, 8, 0.2])
     with col_graf:
-        fig, ax = plt.subplots(figsize=(5, 3.5))
-        fig.patch.set_facecolor('#060B15')
-        configurar_grafico_oscuro(ax, '#00B4D8')
-        ax.bar(['POES Original', 'Recuperable'], [p_mmstb, r_mmstb], color=['#00B4D8', '#00E5FF'], width=0.5)
-        ax.set_ylabel('Volumen (MMSTB)', fontweight='bold')
-        st.pyplot(fig, use_container_width=True)
+        fig = go.Figure()
+
+        # Gráfico de barras combinando colores que contrastan (Azul Verdoso y Naranja Radiante)
+        fig.add_trace(go.Bar(
+            x=['POES Original', 'Reservas Recuperables'],
+            y=[p_mmstb, r_mmstb],
+            marker_color=['#00B4D8', '#FF7A00'], 
+            text=[f"{p_mmstb:,.2f} MMSTB<br>({p_stb:,.0f} STB)", f"{r_mmstb:,.2f} MMSTB<br>({r_stb:,.0f} STB)"],
+            textposition='auto',
+            textfont=dict(size=15, color='#060B15', weight='bold'),
+            hovertemplate='<b>%{x}</b><br>Volumen: %{y:.2f} MMSTB<extra></extra>'
+        ))
+
+        fig.update_layout(
+            title=dict(
+                text='Comparativa Volumétrica: POES vs Reservas Recuperables',
+                font=dict(size=22, color='#060B15', weight='bold'),
+                x=0.5,
+                y=0.95
+            ),
+            height=550,
+            plot_bgcolor='#F4F6F9', 
+            paper_bgcolor='#F4F6F9',
+            xaxis_title=dict(text='Categoría', font=dict(size=18, color='#060B15', weight='bold')),
+            yaxis_title=dict(text='Volumen (MMSTB)', font=dict(size=18, color='#060B15', weight='bold')),
+            xaxis=dict(
+                showgrid=False, 
+                tickfont=dict(size=16, color='#060B15', weight='bold')
+            ),
+            yaxis=dict(
+                showgrid=True, gridcolor='#D1D5DB', zeroline=False, 
+                tickfont=dict(size=14, color='#060B15', weight='bold')
+            ),
+            margin=dict(l=20, r=20, t=60, b=20),
+            showlegend=False
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
