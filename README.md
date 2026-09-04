@@ -28,4 +28,5 @@ El código está estructurado bajo principios de ingeniería de software (separa
 **Interactividad Visual**: Los gráficos son dinámicos. Pasa el cursor (hover) sobre las curvas, puntos operativos y barras para inspeccionar las métricas exactas calculadas.
 
 **Desarrollador**: JOSE GONZALO OCHOA PAZ
+
 **Programa**: Bootcamp Data Analytics for Oil & Gas - SPE Ecuador Section
