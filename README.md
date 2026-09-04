@@ -18,7 +18,6 @@ El código está estructurado bajo principios de ingeniería de software (separa
 * `calculos.py`: Motor matemático de ingeniería. 
 * `validaciones.py`: Reglas de negocio que evitan cálculos físicamente inconsistentes (ej. profundidades negativas o divisiones por cero).
 * `modelos.py`: Clases de datos (`dataclasses`) para organizar y transferir la información de manera limpia entre la interfaz y el motor de cálculo.
-* `datos.py`: Módulo preparado para la lectura y preparación de datos crudos.
 * `__init__.py`: Inicializador del paquete.
 
 ## ⚠️ Consideraciones Importantes de Uso
