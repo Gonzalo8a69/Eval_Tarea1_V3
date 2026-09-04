@@ -6,8 +6,6 @@ import plotly.graph_objects as go
 def aplicar_estilos():
     """
     Inyecta CSS global garantizando la separación de responsabilidades visuales y lógicas.
-    Se ha incrementado la jerarquía visual (tamaño de fuente) para el título de Navegación 
-    y las pestañas (Tabs) de los módulos técnicos.
     """
     css = """
     <style>
@@ -31,7 +29,7 @@ def aplicar_estilos():
             border-right: 1px solid #2A3F5F !important; 
         }
         
-        /* Título del Menú en el Sidebar ("Navegación") - Tamaño Aumentado */
+        /* Título del Menú en el Sidebar ("Navegación") */
         [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
             font-size: 1.8rem !important;
             font-weight: 900 !important;
@@ -86,10 +84,10 @@ def aplicar_estilos():
             color: #060B15 !important; 
         }
         
-        /* --- TABS (Producción, Perforación, Reservorios) - Tamaño Aumentado --- */
+        /* --- TABS (Producción, Perforación, Reservorios) --- */
         [data-testid="stTabs"] button[data-baseweb="tab"] p,
         [data-testid="stTabs"] button[data-baseweb="tab"] div { 
-            font-size: 1.6rem !important; /* Fuente aumentada */
+            font-size: 1.6rem !important; 
             font-weight: bold !important; 
             color: #8B9BB4 !important; 
             padding: 0.5rem 1rem !important;
@@ -97,7 +95,7 @@ def aplicar_estilos():
         [data-testid="stTabs"] button[aria-selected="true"] p { 
             color: #00E5FF !important; 
             text-shadow: 0 0 10px rgba(0, 229, 255, 0.6); 
-            font-size: 1.65rem !important; /* Ligero aumento al estar activo */
+            font-size: 1.65rem !important; 
         }
         
         /* --- TARJETA INFO HOME --- */
@@ -243,11 +241,6 @@ def inyectar_js_animacion():
     </script>"""
     components.html(js, height=0)
 
-# --- CONTROLADORES GRÁFICOS ---
-def configurar_grafico_oscuro(ax, color_acento):
-    """Configuración residual para las gráficas que aún utilicen Matplotlib."""
-    pass
-
 def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
     """PANEL PRODUCCIÓN"""
     c1, c2, c3 = st.columns(3)
@@ -310,22 +303,29 @@ def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
         st.plotly_chart(fig, use_container_width=True)
 
 def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
-    """PANEL PERFORACIÓN"""
+    """
+    PANEL PERFORACIÓN:
+    Se añade opacidad (Hex Alpha '26' -> ~15%) al color de fondo del banner 
+    para destacar más la condición operativa sin perder contraste.
+    """
     if dp > 50:
-        estado = "SOBREBALANCE (ΔP > 0)"
+        estado = "SOBREBALANCE (\u0394P > 0)"
         color_borde = "#00B4D8" 
         mensaje = "La presión hidrostática supera a la de formación. El pozo está bajo control."
     elif abs(dp) <= 50:
-        estado = "BALANCE APROXIMADO (ΔP ≈ 0)"
+        estado = "BALANCE APROXIMADO (\u0394P \u2248 0)"
         color_borde = "#FF7A00" 
         mensaje = "La presión hidrostática está en equilibrio con la formación."
     else:
-        estado = "BAJO BALANCE (ΔP < 0) - ¡ALERTA!"
+        estado = "BAJO BALANCE (\u0394P < 0) - ¡ALERTA!"
         color_borde = "#FF2A2A" 
         mensaje = "La presión de formación supera a la hidrostática. Riesgo inminente de influjo (Kick)."
 
+    # Generamos el color semitransparente concatenando '26' al color sólido
+    color_fondo = f"{color_borde}26"
+
     html_estado = f"""
-    <div style="background-color: #111A2C; border: 1px solid #1A273D; border-left: 6px solid {color_borde}; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.4);">
+    <div style="background-color: {color_fondo}; border: 1px solid {color_borde}; border-left: 6px solid {color_borde}; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.4);">
         <h3 style="color: {color_borde}; margin-top: 0; margin-bottom: 5px; font-size: 1.5rem; text-shadow: 0 0 8px {color_borde}60;">ESTADO OPERATIVO: {estado}</h3>
         <p style="color: #F8FAFC; margin: 0; font-size: 1.1rem;">{mensaje}</p>
     </div>
@@ -393,9 +393,7 @@ def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
         st.plotly_chart(fig, use_container_width=True)
 
 def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
-    """
-    PANEL RESERVORIOS
-    """
+    """PANEL RESERVORIOS"""
     p_stb = p_mmstb * 1_000_000
     r_stb = r_mmstb * 1_000_000
 
