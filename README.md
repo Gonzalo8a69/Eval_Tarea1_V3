@@ -19,6 +19,7 @@ El código está estructurado bajo principios de ingeniería de software (separa
 * `validaciones.py`: Reglas de negocio que evitan cálculos físicamente inconsistentes (ej. profundidades negativas o divisiones por cero).
 * `modelos.py`: Clases de datos (`dataclasses`) para organizar y transferir la información de manera limpia entre la interfaz y el motor de cálculo.
 * `__init__.py`: Inicializador del paquete.
+* `requirements.txt`: Contiene las librerias y dependencias necesarias para asegurar la correcta ejecución de esta aplicación.
 
 ## ⚠️ Consideraciones Importantes de Uso
 
