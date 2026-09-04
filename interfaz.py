@@ -6,6 +6,8 @@ import plotly.graph_objects as go
 def aplicar_estilos():
     """
     Inyecta CSS global garantizando la separación de responsabilidades visuales y lógicas.
+    Se ha incrementado la jerarquía visual (tamaño de fuente) para el título de Navegación 
+    y las pestañas (Tabs) de los módulos técnicos.
     """
     css = """
     <style>
@@ -23,10 +25,20 @@ def aplicar_estilos():
         section[data-testid="stSidebar"], 
         section[data-testid="stSidebar"] > div:first-child,
         section[data-testid="stSidebar"] > div:first-child > div { 
-            background-color: #0B1630 !important; 
+            background-color: #1A56B6 !important; 
         }
         section[data-testid="stSidebar"] {
             border-right: 1px solid #2A3F5F !important; 
+        }
+        
+        /* Título del Menú en el Sidebar ("Navegación") - Tamaño Aumentado */
+        [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
+            font-size: 1.8rem !important;
+            font-weight: 900 !important;
+            color: #00E5FF !important;
+            margin-bottom: 1rem !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         /* --- CAJAS DE ENTRADA (INPUTS) --- */
@@ -74,10 +86,19 @@ def aplicar_estilos():
             color: #060B15 !important; 
         }
         
-        /* --- TABS --- */
+        /* --- TABS (Producción, Perforación, Reservorios) - Tamaño Aumentado --- */
         [data-testid="stTabs"] button[data-baseweb="tab"] p,
-        [data-testid="stTabs"] button[data-baseweb="tab"] div { font-size: 1.3rem !important; font-weight: bold !important; color: #8B9BB4 !important; }
-        [data-testid="stTabs"] button[aria-selected="true"] p { color: #00E5FF !important; text-shadow: 0 0 8px rgba(0, 229, 255, 0.5); }
+        [data-testid="stTabs"] button[data-baseweb="tab"] div { 
+            font-size: 1.6rem !important; /* Fuente aumentada */
+            font-weight: bold !important; 
+            color: #8B9BB4 !important; 
+            padding: 0.5rem 1rem !important;
+        }
+        [data-testid="stTabs"] button[aria-selected="true"] p { 
+            color: #00E5FF !important; 
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.6); 
+            font-size: 1.65rem !important; /* Ligero aumento al estar activo */
+        }
         
         /* --- TARJETA INFO HOME --- */
         .tarjeta-info {
@@ -373,9 +394,7 @@ def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
 
 def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
     """
-    PANEL RESERVORIOS:
-    Gráficas de barras comparativas utilizando Plotly.
-    Corrección: Título dividido en dos líneas y centrado para evitar recortes en pantallas más pequeñas.
+    PANEL RESERVORIOS
     """
     p_stb = p_mmstb * 1_000_000
     r_stb = r_mmstb * 1_000_000
@@ -403,11 +422,11 @@ def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
 
         fig.update_layout(
             title=dict(
-                text='Comparativa Volumétrica:<br>POES vs Reservas Recuperables', # Salto de línea añadido
-                font=dict(size=20, color='#060B15', weight='bold'), # Fuente ajustada para prevenir desbordamientos
+                text='Comparativa Volumétrica:<br>POES vs Reservas Recuperables', 
+                font=dict(size=20, color='#060B15', weight='bold'),
                 x=0.5,
                 y=0.95,
-                xanchor='center' # Anclaje al centro para que el salto de línea quede simétrico
+                xanchor='center' 
             ),
             height=550,
             plot_bgcolor='#F4F6F9', 
@@ -422,7 +441,7 @@ def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
                 showgrid=True, gridcolor='#D1D5DB', zeroline=False, 
                 tickfont=dict(size=14, color='#060B15', weight='bold')
             ),
-            margin=dict(l=20, r=20, t=80, b=20), # Aumentado el margen superior 't' para acomodar las dos líneas del título
+            margin=dict(l=20, r=20, t=80, b=20),
             showlegend=False
         )
         
