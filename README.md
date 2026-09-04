@@ -1,4 +1,4 @@
-Markdown# 🛢️ Plataforma de Analítica para Oil & Gas
+# 🛢️ Plataforma de Analítica para Oil & Gas
 
 ## 📖 Descripción General
 Esta aplicación web interactiva está diseñada para ejecutar cálculos críticos de ingeniería petrolera de forma ágil y visual. Desarrollada como parte del **Bootcamp Data Analytics for Oil & Gas**, la plataforma ofrece una interfaz profesional inspirada en sistemas de control operativo (Dark Theme / SCADA) para facilitar la toma de decisiones basada en datos.
@@ -21,11 +21,11 @@ El código está estructurado bajo principios de ingeniería de software (separa
 * `datos.py`: Módulo preparado para la lectura y preparación de datos crudos.
 * `__init__.py`: Inicializador del paquete.
 
-⚠️ Consideraciones Importantes de Uso
+## ⚠️ Consideraciones Importantes de Uso
 
-Unidades de Medida: Presta atención a las unidades indicadas entre corchetes [...] en cada caja de texto (ej. Presión en psi, Caudal en STB/d).Fracciones vs Porcentajes: En el módulo de Reservorios, las propiedades petrofísicas como la Porosidad, Saturación Inicial de Agua ($Swi$), relación Net-to-Gross ($NTG$) y el Factor de Recobro ($FR$) deben ingresarse obligatoriamente como fracciones (valores entre 0 y 1), no como porcentajes enteros.
+**Unidades de Medida**: Presta atención a las unidades indicadas entre corchetes [...] en cada caja de texto (ej. Presión en psi, Caudal en STB/d).Fracciones vs Porcentajes: En el módulo de Reservorios, las propiedades petrofísicas como la Porosidad, Saturación Inicial de Agua ($Swi$), relación Net-to-Gross ($NTG$) y el Factor de Recobro ($FR$) deben ingresarse obligatoriamente como fracciones (valores entre 0 y 1), no como porcentajes enteros.
 
-Interactividad Visual: Los gráficos son dinámicos. Pasa el cursor (hover) sobre las curvas, puntos operativos y barras para inspeccionar las métricas exactas calculadas.
+**Interactividad Visual**: Los gráficos son dinámicos. Pasa el cursor (hover) sobre las curvas, puntos operativos y barras para inspeccionar las métricas exactas calculadas.
 
-Desarrollador: JOSE GONZALO OCHOA PAZ
-Programa: Bootcamp Data Analytics for Oil & Gas - SPE Ecuador Section
+**Desarrollador**: JOSE GONZALO OCHOA PAZ
+**Programa**: Bootcamp Data Analytics for Oil & Gas - SPE Ecuador Section
