@@ -374,10 +374,9 @@ def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
 def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
     """
     PANEL RESERVORIOS:
-    Se generan gráficas de barras comparativas utilizando Plotly para cumplir
-    con los requisitos visuales de la rúbrica, garantizando colores llamativos.
+    Gráficas de barras comparativas utilizando Plotly.
+    Corrección: Título dividido en dos líneas y centrado para evitar recortes en pantallas más pequeñas.
     """
-    # Cálculo para visualización en STB y cumplir con mostrar ambas unidades sin alterar parámetros de app.py
     p_stb = p_mmstb * 1_000_000
     r_stb = r_mmstb * 1_000_000
 
@@ -392,7 +391,6 @@ def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
     with col_graf:
         fig = go.Figure()
 
-        # Gráfico de barras combinando colores que contrastan (Azul Verdoso y Naranja Radiante)
         fig.add_trace(go.Bar(
             x=['POES Original', 'Reservas Recuperables'],
             y=[p_mmstb, r_mmstb],
@@ -405,10 +403,11 @@ def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
 
         fig.update_layout(
             title=dict(
-                text='Comparativa Volumétrica: POES vs Reservas Recuperables',
-                font=dict(size=22, color='#060B15', weight='bold'),
+                text='Comparativa Volumétrica:<br>POES vs Reservas Recuperables', # Salto de línea añadido
+                font=dict(size=20, color='#060B15', weight='bold'), # Fuente ajustada para prevenir desbordamientos
                 x=0.5,
-                y=0.95
+                y=0.95,
+                xanchor='center' # Anclaje al centro para que el salto de línea quede simétrico
             ),
             height=550,
             plot_bgcolor='#F4F6F9', 
@@ -423,7 +422,7 @@ def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
                 showgrid=True, gridcolor='#D1D5DB', zeroline=False, 
                 tickfont=dict(size=14, color='#060B15', weight='bold')
             ),
-            margin=dict(l=20, r=20, t=60, b=20),
+            margin=dict(l=20, r=20, t=80, b=20), # Aumentado el margen superior 't' para acomodar las dos líneas del título
             showlegend=False
         )
         
