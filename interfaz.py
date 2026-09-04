@@ -224,7 +224,7 @@ def inyectar_js_animacion():
 
 # --- CONTROLADORES GRÁFICOS ---
 def configurar_grafico_oscuro(ax, color_acento):
-    """Configuración para las gráficas que aún utilizan Matplotlib."""
+    """Configuración residual para las gráficas que aún utilicen Matplotlib."""
     ax.set_facecolor('#111A2C')
     ax.tick_params(colors='#8B9BB4')
     for spine in ax.spines.values():
@@ -234,10 +234,7 @@ def configurar_grafico_oscuro(ax, color_acento):
     ax.yaxis.label.set_color(color_acento)
 
 def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
-    """
-    PANEL PRODUCCIÓN: Gráfica migrada a Plotly con diseño optimizado.
-    Título embebido de forma nativa para garantizar su correcta visualización.
-    """
+    """PANEL PRODUCCIÓN"""
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_produccion("Caudal Actual", qo, "STB/d")
     with c2: renderizar_tarjeta_produccion("Caudal a Burbuja", qb, "STB/d")
@@ -269,10 +266,10 @@ def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
             title=dict(
                 text='Análisis de Desempeño de Afluencia (Curva IPR)',
                 font=dict(size=22, color='#060B15', weight='bold'),
-                x=0.5, # Alineación centrada
+                x=0.5,
                 y=0.95
             ),
-            height=550, # Incrementado ligeramente para acomodar el título
+            height=550, 
             plot_bgcolor='#F4F6F9', 
             paper_bgcolor='#F4F6F9', 
             xaxis_title=dict(text='Caudal (STB/d)', font=dict(size=18, color='#060B15', weight='bold')),
@@ -291,33 +288,108 @@ def mostrar_panel_ipr(qo, qb, qmax, pwf, q_arr, p_arr):
                 bordercolor="#060B15", borderwidth=1,
                 font=dict(size=14, color='#060B15', weight='bold')
             ),
-            margin=dict(l=20, r=20, t=60, b=20), # Ajustado el margen top (t) para dar espacio al título
+            margin=dict(l=20, r=20, t=60, b=20), 
             hovermode="closest"
         )
 
         st.plotly_chart(fig, use_container_width=True)
 
 def mostrar_panel_perforacion(gh, ph, dp, tvd, pform):
+    """
+    PANEL PERFORACIÓN:
+    Genera un banner visual dinámico basado en el Diferencial de Presión y 
+    dibuja el perfil hidrostático utilizando Plotly.
+    """
+    # 1. Lógica Visual del Indicador de Condición
+    if dp > 50:
+        estado = "SOBREBALANCE (ΔP > 0)"
+        color_borde = "#00B4D8" # Teal/Cyan
+        mensaje = "La presión hidrostática supera a la de formación. El pozo está bajo control."
+    elif abs(dp) <= 50:
+        estado = "BALANCE APROXIMADO (ΔP ≈ 0)"
+        color_borde = "#FF7A00" # Naranja
+        mensaje = "La presión hidrostática está en equilibrio con la formación."
+    else:
+        estado = "BAJO BALANCE (ΔP < 0) - ¡ALERTA!"
+        color_borde = "#FF2A2A" # Rojo
+        mensaje = "La presión de formación supera a la hidrostática. Riesgo inminente de influjo (Kick)."
+
+    # Inyección HTML para el banner de estado
+    html_estado = f"""
+    <div style="background-color: #111A2C; border: 1px solid #1A273D; border-left: 6px solid {color_borde}; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.4);">
+        <h3 style="color: {color_borde}; margin-top: 0; margin-bottom: 5px; font-size: 1.5rem; text-shadow: 0 0 8px {color_borde}60;">ESTADO OPERATIVO: {estado}</h3>
+        <p style="color: #F8FAFC; margin: 0; font-size: 1.1rem;">{mensaje}</p>
+    </div>
+    """
+    st.markdown(html_estado, unsafe_allow_html=True)
+
+    # 2. Tarjetas de métricas
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_magnetica("Gradiente", gh, "psi/ft")
     with c2: renderizar_tarjeta_magnetica("P. Hidrostática", ph, "psi")
     with c3: renderizar_tarjeta_magnetica("Diferencial (\u0394P)", dp, "psi")
     
-    _, col_graf, _ = st.columns([1, 1, 1])
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # 3. Gráfico Interactivo de Perfil de Presión con Plotly
+    _, col_graf, _ = st.columns([0.2, 8, 0.2])
     with col_graf:
-        fig, ax = plt.subplots(figsize=(3.5, 5))
-        fig.patch.set_facecolor('#060B15')
-        configurar_grafico_oscuro(ax, '#B026FF')
-        ax.plot([0, ph], [0, tvd], color='#B026FF', linewidth=2.5, label='P. Hidrostática')
-        ax.scatter(pform, tvd, color='#00E5FF', s=100, label='P. Formación')
-        ax.invert_yaxis()
-        ax.set_xlabel('Presión (psi)', fontweight='bold')
-        ax.set_ylabel('Profundidad TVD (ft)', fontweight='bold')
-        legend = ax.legend(facecolor='#111A2C', edgecolor='#2A3F5F')
-        for text in legend.get_texts(): text.set_color('#F8FAFC')
-        st.pyplot(fig, use_container_width=True)
+        fig = go.Figure()
+
+        # Línea de Presión Hidrostática
+        fig.add_trace(go.Scatter(
+            x=[0, ph], y=[0, tvd],
+            mode='lines',
+            name='P. Hidrostática',
+            line=dict(color='#B026FF', width=4), # Color morado solicitado
+            hovertemplate='Presión: %{x:.1f} psi<br>Profundidad: %{y:.1f} ft<extra></extra>'
+        ))
+
+        # Punto de Presión de Formación
+        fig.add_trace(go.Scatter(
+            x=[pform], y=[tvd],
+            mode='markers',
+            name='P. Formación',
+            marker=dict(color='#00E5FF', size=16, line=dict(color='#060B15', width=2)), # Color cian solicitado
+            hovertemplate='<b>Formación</b><br>Presión: %{x:.1f} psi<br>Profundidad: %{y:.1f} ft<extra></extra>'
+        ))
+
+        # Layout ajustado al diseño de Producción
+        fig.update_layout(
+            title=dict(
+                text='Perfil de Presión Hidrostática vs TVD',
+                font=dict(size=22, color='#060B15', weight='bold'),
+                x=0.5,
+                y=0.95
+            ),
+            height=550, 
+            plot_bgcolor='#F4F6F9', 
+            paper_bgcolor='#F4F6F9', 
+            xaxis_title=dict(text='Presión (psi)', font=dict(size=18, color='#060B15', weight='bold')),
+            yaxis_title=dict(text='Profundidad TVD (ft)', font=dict(size=18, color='#060B15', weight='bold')),
+            xaxis=dict(
+                showgrid=True, gridcolor='#D1D5DB', zeroline=False, 
+                tickfont=dict(size=14, color='#060B15', weight='bold')
+            ),
+            yaxis=dict(
+                showgrid=True, gridcolor='#D1D5DB', zeroline=False, 
+                autorange='reversed', # Invierte el eje Y para que la profundidad vaya hacia abajo
+                tickfont=dict(size=14, color='#060B15', weight='bold')
+            ),
+            legend=dict(
+                yanchor="top", y=0.85, xanchor="right", x=0.98, 
+                bgcolor="rgba(255,255,255,0.9)", 
+                bordercolor="#060B15", borderwidth=1,
+                font=dict(size=14, color='#060B15', weight='bold')
+            ),
+            margin=dict(l=20, r=20, t=60, b=20),
+            hovermode="closest"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
 def mostrar_panel_reservorios(hn, p_mmstb, r_mmstb):
+    """PANEL RESERVORIOS"""
     c1, c2, c3 = st.columns(3)
     with c1: renderizar_tarjeta_reservorio("Espesor Neto", hn, "ft", "delay-1")
     with c2: renderizar_tarjeta_reservorio("POES", p_mmstb, "MMSTB", "delay-2")
