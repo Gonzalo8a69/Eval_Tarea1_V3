@@ -25,7 +25,7 @@ def aplicar_estilos():
         section[data-testid="stSidebar"], 
         section[data-testid="stSidebar"] > div:first-child,
         section[data-testid="stSidebar"] > div:first-child > div { 
-            background-color: #1A56B6 !important; 
+            background-color: #0B1630 !important; 
         }
         section[data-testid="stSidebar"] {
             border-right: 1px solid #2A3F5F !important; 
