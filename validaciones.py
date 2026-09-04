@@ -1,7 +1,7 @@
 def validar_ipr(pr, pb, j, pwf):
     if any(v < 0 for v in [pr, pb, j, pwf]): return False, "**Los Parámetros no pueden ser negativos.**"
-    if pr <= pb: return False, "Pr debe ser mayor a Pb."
-    if pwf > pr: return False, "Pwf no puede superar Pr."
+    if pr <= pb: return False, "** La variable Pr debe ser mayor al valor de Pb.**"
+    if pwf > pr: return False, "** La variable Pwf no puede superar a Pr.**"
     return True, "OK"
 
 def validar_perforacion(mw, md, tvd, pform):
